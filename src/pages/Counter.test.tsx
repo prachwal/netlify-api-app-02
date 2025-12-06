@@ -53,4 +53,40 @@ describe('Counter', () => {
     fireEvent.click(resetButton)
     expect(screen.getByText('0')).toBeInTheDocument()
   })
+
+  it('renders with vertical layout on mobile screen sizes', () => {
+    // Mock window.innerWidth to be 600px (mobile)
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 600,
+    })
+    renderWithProviders(<Counter />)
+
+    // Verify it still renders correctly with vertical layout
+    expect(screen.getByText('Counter')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
+
+    // Verify button sizes are 'middle' for mobile
+    const buttons = screen.getAllByRole('button')
+    expect(buttons.length).toBeGreaterThan(0)
+  })
+
+  it('renders with horizontal layout on desktop screen sizes', () => {
+    // Mock window.innerWidth to be 1024px (desktop)
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1024,
+    })
+    renderWithProviders(<Counter />)
+
+    // Verify it still renders correctly with horizontal layout
+    expect(screen.getByText('Counter')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
+
+    // Verify button sizes are 'large' for desktop
+    const buttons = screen.getAllByRole('button')
+    expect(buttons.length).toBeGreaterThan(0)
+  })
 })

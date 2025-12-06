@@ -28,3 +28,6 @@ dist-ssr
 
 # Temporary merge output
 tmp/
+
+# Test coverage reports
+coverage/
