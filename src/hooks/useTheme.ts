@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import type { RootState } from '../store'
 
 export const useTheme = () => {
-  const themeMode = useSelector((state: RootState) => state.theme.mode)
+  const themeMode = useSelector((state: RootState) => state.settings.theme)
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {

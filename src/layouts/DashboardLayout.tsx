@@ -17,9 +17,9 @@ import {
 } from '@ant-design/icons'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '../store'
-import { setTheme } from '../store/themeSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootState } from '../store'
+import { setTheme, setLanguage } from '../store/settingsSlice'
 import { useTheme } from '../hooks/useTheme'
 
 const { Header, Sider, Content } = Layout
@@ -32,6 +32,7 @@ export const DashboardLayout = () => {
   const { t, i18n } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const { themeMode } = useTheme()
+  const language = useSelector((state: RootState) => state.settings.language)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -47,31 +48,46 @@ export const DashboardLayout = () => {
       key: '/',
       icon: <DashboardOutlined />,
       label: t('nav.dashboard'),
-      onClick: () => navigate('/'),
+      onClick: () => {
+        navigate('/')
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: '/counter',
       icon: <NumberOutlined />,
       label: t('nav.counter'),
-      onClick: () => navigate('/counter'),
+      onClick: () => {
+        navigate('/counter')
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: '/settings',
       icon: <SettingOutlined />,
       label: t('nav.settings'),
-      onClick: () => navigate('/settings'),
+      onClick: () => {
+        navigate('/settings')
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: '/test',
       icon: <ExperimentOutlined />,
       label: t('nav.test'),
-      onClick: () => navigate('/test'),
+      onClick: () => {
+        navigate('/test')
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: '/components',
       icon: <BulbOutlined />,
       label: 'Komponenty',
-      onClick: () => navigate('/components'),
+      onClick: () => {
+        navigate('/components')
+        if (isMobile) setCollapsed(true)
+      },
     },
   ]
 
@@ -79,17 +95,26 @@ export const DashboardLayout = () => {
     {
       key: 'light',
       label: t('theme.light'),
-      onClick: () => dispatch(setTheme('light')),
+      onClick: () => {
+        dispatch(setTheme('light'))
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: 'dark',
       label: t('theme.dark'),
-      onClick: () => dispatch(setTheme('dark')),
+      onClick: () => {
+        dispatch(setTheme('dark'))
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: 'system',
       label: t('theme.system'),
-      onClick: () => dispatch(setTheme('system')),
+      onClick: () => {
+        dispatch(setTheme('system'))
+        if (isMobile) setCollapsed(true)
+      },
     },
   ]
 
@@ -97,12 +122,20 @@ export const DashboardLayout = () => {
     {
       key: 'en',
       label: 'English',
-      onClick: () => i18n.changeLanguage('en'),
+      onClick: () => {
+        dispatch(setLanguage('en'))
+        i18n.changeLanguage('en')
+        if (isMobile) setCollapsed(true)
+      },
     },
     {
       key: 'pl',
       label: 'Polski',
-      onClick: () => i18n.changeLanguage('pl'),
+      onClick: () => {
+        dispatch(setLanguage('pl'))
+        i18n.changeLanguage('pl')
+        if (isMobile) setCollapsed(true)
+      },
     },
   ]
 
@@ -175,7 +208,7 @@ export const DashboardLayout = () => {
             <Dropdown menu={{ items: themeItems, selectedKeys: [themeMode] }}>
               <Button type="text" icon={<BulbOutlined />} />
             </Dropdown>
-            <Dropdown menu={{ items: languageItems, selectedKeys: [i18n.language] }}>
+            <Dropdown menu={{ items: languageItems, selectedKeys: [language] }}>
               <Button type="text" icon={<GlobalOutlined />} />
             </Dropdown>
           </Space>

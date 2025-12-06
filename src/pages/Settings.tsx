@@ -2,16 +2,16 @@ import Card from 'antd/es/card'
 import Select from 'antd/es/select'
 import Space from 'antd/es/space'
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '../store'
-import { setTheme } from '../store/themeSlice'
-import type { ThemeMode } from '../store/themeSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootState } from '../store'
+import { setTheme, setLanguage, type ThemeMode, type Language } from '../store/settingsSlice'
 import { useTheme } from '../hooks/useTheme'
 
 export const Settings = () => {
   const { t, i18n } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const { themeMode } = useTheme()
+  const language = useSelector((state: RootState) => state.settings.language)
 
   return (
     <div>
@@ -39,8 +39,11 @@ export const Settings = () => {
             <label>{t('settings.languageLabel')}</label>
             <Select
               style={{ width: '100%' }}
-              value={i18n.language}
-              onChange={(value: string) => i18n.changeLanguage(value)}
+              value={language}
+              onChange={(value: Language) => {
+                dispatch(setLanguage(value))
+                i18n.changeLanguage(value)
+              }}
               options={[
                 { value: 'en', label: 'English' },
                 { value: 'pl', label: 'Polski' },

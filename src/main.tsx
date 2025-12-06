@@ -10,7 +10,7 @@ import type { RootState } from './store'
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ThemeWrapper = ({ children }: { children: React.ReactNode }) => {
-  const themeMode = useSelector((state: RootState) => state.theme.mode)
+  const themeMode = useSelector((state: RootState) => state.settings.theme)
   const isDark = themeMode === 'dark' || (themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
