@@ -1,0 +1,1 @@
+export type { apiResponse } from "../../netlify/types";
