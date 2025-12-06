@@ -1,58 +1,77 @@
 # Copilot Instructions for netlify-api-app-02
 
 ## Project Overview
-This is a responsive mobile-first dashboard app built with React, TypeScript, and Vite. It features theme switching (light/dark/system) and internationalization (English/Polish) using Ant Design UI components.
+This is a responsive mobile-first dashboard app built with React, TypeScript, and Vite. It features theme switching (light/dark/system), internationalization (English/Polish), and a serverless backend with MongoDB persistence using Ant Design UI components.
 
 ## Architecture
-- **Routing**: React Router with nested routes under `DashboardLayout` and lazy-loaded pages (see `src/App.tsx`)
-- **State Management**: Redux Toolkit with settingsSlice (theme & language with localStorage persistence) and counterSlice (see `src/store/`)
+- **Frontend**: React 19 + TypeScript + Vite with lazy-loaded routes under `DashboardLayout`
+- **Backend**: Netlify Functions (Node.js) with MongoDB Atlas for data persistence
+- **State Management**: Redux Toolkit + RTK Query for API state management
 - **UI Framework**: Ant Design with theme configuration in `ConfigProvider` at root level (`src/main.tsx`)
-- **Build Tool**: Vite with TypeScript and code splitting for optimal performance
-- **Error Handling**: Dedicated 404 and error pages with internationalization
+- **Data Flow**: RTK Query → Netlify Functions → MongoDB → Settings synchronization with Redux
+- **Logging**: Winston (backend) + Custom Logger singleton (frontend) with development-only filtering
 
 ## Key Patterns
-- **Theme Handling**: Use `useTheme` hook from `src/hooks/useTheme.ts` for theme state; update via Redux `settingsSlice`
-- **Language Handling**: Use Redux `settingsSlice` for language state with i18n integration
-- **Internationalization**: Translations in `src/i18n/config.ts`; use `useTranslation` hook from react-i18next
-- **Layout Structure**: Pages are nested under `DashboardLayout.tsx` with sidebar navigation
-- **Notifications**: Use `message` and `notification` from `App.useApp()` for theme context; use `title` instead of `message` in notification props (see `src/pages/TestNotifications.tsx`)
-- **Theme Context**: Always use `App.useApp()` for `message`, `notification`, and `modal` to ensure proper theme inheritance; avoid static imports like `import { message } from 'antd'` which don't respond to theme changes
-- **Code Splitting**: All route components are lazy-loaded for optimal performance
-- **Error Boundaries**: Use `/error` route for error handling and `/*` catch-all for 404 pages
+
+### API Integration & State Synchronization
+- **RTK Query**: All API calls through `src/store/api.ts` with automatic cache invalidation
+- **Settings Sync**: Redux state synchronized with MongoDB via `useEffect` in `Settings.tsx`:
+  ```typescript
+  useEffect(() => {
+    if (settingsData?.data) {
+      dispatch(setTheme(theme))
+      dispatch(setLanguage(language))
+      i18n.changeLanguage(language)
+    }
+  }, [settingsData, dispatch, i18n])
+  ```
+- **Optimistic Updates**: API mutations immediately update Redux state for instant UI feedback
+
+### Logging System
+- **Frontend**: Use singleton `logger` from `src/utils/logger.ts` (development-only info/debug)
+- **Backend**: Winston with structured JSON logs in `netlify/functions/**/*.mts`
+- **Pattern**: `logger.info('Action completed', { contextData })` with consistent metadata
+
+### Theme & i18n Integration
+- **Theme Context**: Always use `App.useApp()` for `message`, `notification`, `modal` to inherit theme
+- **i18n Updates**: Synchronize Redux language changes with `i18n.changeLanguage()`
+- **Ant Design**: Use specific imports (`antd/es/button`) for tree-shaking; avoid deprecated props
+
+### Backend Architecture
+- **Netlify Functions**: Serverless functions in `netlify/functions/` with MongoDB via `MongoDBHandler`
+- **Data Persistence**: Settings stored in MongoDB with automatic default creation
+- **Error Handling**: Structured API responses with `apiResponse<T>` type from `types/apiResponse.mts`
 
 ## Developer Workflows
-- **Development**: `npm run dev` starts Vite dev server
-- **Build**: `npm run build` compiles TypeScript and builds for production with code splitting, tree-shaking, and lazy loading. Uses specific Ant Design imports to reduce bundle size.
-- **Linting**: `npm run lint` runs ESLint
-- **Merge Script**: `npm run merge` bundles config files and src/ into `tmp/merged-files.txt` for context sharing
+- **Development**: `npm run dev` starts Vite dev server with hot reload
+- **Build**: `npm run build` compiles TypeScript and builds for production with code splitting
+- **Testing**: `npm test` runs Vitest with mocked RTK Query APIs (see `src/test/setup.ts`)
+- **Linting**: `npm run lint` runs ESLint with React hooks validation
+- **Context Sharing**: `npm run merge` bundles codebase into `tmp/merged-files.txt` for AI context
 
 ## Conventions
-- **File Structure**: Pages in `src/pages/`, layouts in `src/layouts/`, store slices in `src/store/`
-- **State Updates**: Dispatch actions to Redux slices (e.g., `counterSlice.ts` for counter logic)
-- **Styling**: CSS modules or Antd classes; theme applied via `ConfigProvider`
-- **Imports**: Use specific Ant Design component imports (e.g., `import Button from 'antd/es/button'`) instead of barrel imports for better tree-shaking and reduced bundle sizes
-- **Ant Design**: Use `orientation` instead of deprecated `direction` prop for Space components; use `size` instead of deprecated `width` prop for Drawer components; use `title` instead of deprecated `message` prop for Alert components
-- **Deployment**: Hosted on Netlify; use `netlify sites:list` to check sites
+- **File Structure**: Pages in `src/pages/`, layouts in `src/layouts/`, store slices in `src/store/`, functions in `netlify/functions/`
+- **State Updates**: Dispatch Redux actions immediately after successful API mutations
+- **Imports**: Specific Ant Design imports (`antd/es/button`) for bundle optimization
+- **Error Handling**: Use RTK Query's `unwrap()` for mutation error handling
+- **Logging**: Frontend logs only in development; backend logs always with structured data
 
 ## Examples
-- Adding a new page: Create in `src/pages/`, add route in `src/App.tsx`, update nav in `DashboardLayout.tsx`
-- Managing state: Define actions/reducers in slice files, use `useSelector`/`useDispatch` in components
-- Theming: Check `isDark` from `useTheme` hook to conditionally apply styles
+- **Adding API endpoint**: Define in `src/store/api.ts`, implement in `netlify/functions/`, add to RTK Query tags
+- **Settings synchronization**: Update API → dispatch Redux action → update i18n if needed
+- **Component logging**: `logger.info('Component action', { relevantData })` with development filtering
+- **Testing mutations**: Mock RTK Query in `setup.ts`, test Redux state changes
 
 ## Dependencies & Libraries
-- Core: React 19, Vite, TypeScript
-- State: Redux Toolkit (@reduxjs/toolkit, react-redux)
-- UI: Ant Design (antd)
-- Routing: React Router DOM
-- i18n: react-i18next, i18next
-- Avoid unnecessary dependencies; evaluate each addition.
+- **Core**: React 19, Vite, TypeScript, Netlify Functions
+- **State**: Redux Toolkit, RTK Query, React Redux
+- **UI**: Ant Design (antd) with specific imports
+- **Backend**: MongoDB driver, Winston logging
+- **i18n**: react-i18next, i18next
+- **Testing**: Vitest, React Testing Library, jsdom
 
-## Git Workflow
-- Commit messages should be descriptive and follow conventional commits where applicable.
-- Branch naming: feature/, bugfix/, etc.
-
-## Additional Notes
-- License: MIT
-- Author: Przemyslaw Rachwlal <przemyslaw.rachwal@gmail.com>
-- Repository: <https://github.com/prachwal/netlify-api-app-02></content>
-<parameter name="filePath">/home/prachwal/src/react/netlify-api-app-02/.github/copilot-instructions.md
+## Critical Integration Points
+- **MongoDB Connection**: Environment variables `MONGO_URI`, `DB_NAME` required
+- **Settings Sync**: Redux must sync with API data on component mount
+- **Theme Context**: Ant Design components inherit theme from `ConfigProvider`
+- **RTK Query Tags**: Proper invalidation required for cache consistency<parameter name="filePath">/home/prachwal/src/react/netlify-api-app-02/.github/copilot-instructions.md
