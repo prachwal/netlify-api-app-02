@@ -1,11 +1,17 @@
 :root {
   --header-bg: #ffffff;
   --content-bg: #ffffff;
+  --success-color: #3f8600;
+  --primary-color: #1890ff;
+  --error-color: #cf1322;
 }
 
 [data-theme='dark'] {
   --header-bg: #001529;
   --content-bg: #141414;
+  --success-color: #49aa19;
+  --primary-color: #177ddc;
+  --error-color: #d4380d;
 }
 
 * {

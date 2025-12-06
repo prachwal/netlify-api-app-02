@@ -18,7 +18,7 @@ export const Dashboard = () => {
               title="Users"
               value={1128}
               prefix={<UserOutlined />}
-              valueStyle={{ color: '#3f8600' }}
+              styles={{ content: { color: 'var(--success-color)' } }}
             />
           </Card>
         </Col>
@@ -28,7 +28,7 @@ export const Dashboard = () => {
               title="Orders"
               value={342}
               prefix={<ShoppingCartOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              styles={{ content: { color: 'var(--primary-color)' } }}
             />
           </Card>
         </Col>
@@ -39,7 +39,7 @@ export const Dashboard = () => {
               value={12893}
               prefix={<DollarOutlined />}
               precision={2}
-              valueStyle={{ color: '#cf1322' }}
+              styles={{ content: { color: 'var(--error-color)' } }}
             />
           </Card>
         </Col>
