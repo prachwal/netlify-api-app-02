@@ -21,6 +21,13 @@ interface UsersResponse {
  * Business logic handler for users endpoint
  */
 async function usersHandler(request: Request, context: Context): Promise<UsersResponse> {
+  console.log('Environment variables:', {
+    NODE_ENV: process.env.NODE_ENV,
+    NETLIFY: process.env.NETLIFY,
+    NETLIFY_DEV: process.env.NETLIFY_DEV,
+    CONTEXT: process.env.CONTEXT
+  });
+
   const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017';
   const dbName = process.env.DB_NAME || 'netlify-api-app';
   const mongoHandler = new MongoDBHandler(mongoUri, dbName);
@@ -43,6 +50,8 @@ async function usersHandler(request: Request, context: Context): Promise<UsersRe
       } else {
         // Get all users
         const users = await mongoHandler.find('users');
+        console.log('Found users:', users); // Debug log
+        console.log('Users count:', users.length); // Debug log
         return { users: users as User[] };
       }
     } else if (request.method === 'POST') {
@@ -108,7 +117,8 @@ export default async (request: Request, context: Context) => {
         endpoint: 'users',
         service: 'user-management'
       },
-      skipRetry: request.method === 'POST' || request.method === 'PUT' || request.method === 'DELETE' // Don't retry mutations
+      skipRetry: request.method === 'POST' || request.method === 'PUT' || request.method === 'DELETE',
+      skipCache: process.env.NETLIFY_DEV === 'true' || !process.env.NETLIFY // Netlify dev mode or local
     }
   );
 };

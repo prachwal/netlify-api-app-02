@@ -13,7 +13,7 @@ export const Dashboard = () => {
   if (isLoading) return <div>Loading dashboard...</div>
   if (error) return <div>Error loading dashboard</div>
 
-  const data = dashboardData?.data
+  const data = dashboardData
 
   return (
     <div>

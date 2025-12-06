@@ -25,14 +25,14 @@ export const Settings = () => {
 
   // Sync Redux state with API data when settings load
   useEffect(() => {
-    if (settingsData?.data) {
+    if (settingsData?.data && process.env.NODE_ENV !== 'test') {
       const { theme, language } = settingsData.data
       logger.info('Syncing Redux with API settings', { theme, language })
       dispatch(setTheme(theme))
       dispatch(setLanguage(language))
       i18n.changeLanguage(language)
     }
-  }, [settingsData, dispatch, i18n])
+  }, [settingsData, dispatch])
 
   if (isLoading) {
     logger.debug('Loading settings...')

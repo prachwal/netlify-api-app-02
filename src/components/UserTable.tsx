@@ -27,7 +27,7 @@ export const UserTable = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [form] = Form.useForm()
 
-  const dataSource = users?.data?.map((user: { id: string; name: string; email: string; created_at: string; settings?: { [key: string]: unknown } }) => ({
+  const dataSource = users?.data?.users?.map((user: { id: string; name: string; email: string; created_at: string; settings?: { [key: string]: unknown } }) => ({
     ...user,
     key: user.id,
     role: (user.settings?.role as string) || 'User',
