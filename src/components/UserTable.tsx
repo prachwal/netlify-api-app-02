@@ -44,6 +44,7 @@ export const UserTable = () => {
       title: 'Avatar',
       dataIndex: 'avatar',
       key: 'avatar',
+      responsive: ['md'],
       render: (avatar) => <Avatar src={avatar} />
     },
     {
@@ -55,7 +56,8 @@ export const UserTable = () => {
     {
       title: 'Email',
       dataIndex: 'email',
-      key: 'email'
+      key: 'email',
+      responsive: ['md']
     },
     {
       title: 'Role',
@@ -86,26 +88,29 @@ export const UserTable = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button type="link" icon={<EyeOutlined />} size="small">
-            View
-          </Button>
-          <Button type="link" icon={<EditOutlined />} size="small">
-            Edit
-          </Button>
-          <Popconfirm
-            title="Are you sure you want to delete this user?"
-            onConfirm={() => console.log('Delete user:', record.key)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button type="link" danger icon={<DeleteOutlined />} size="small">
-              Delete
+      render: (_, record) => {
+        const isMobile = window.innerWidth < 768
+        return (
+          <Space size="middle">
+            <Button type="link" icon={<EyeOutlined />} size="small">
+              {isMobile ? '' : 'View'}
             </Button>
-          </Popconfirm>
-        </Space>
-      )
+            <Button type="link" icon={<EditOutlined />} size="small">
+              {isMobile ? '' : 'Edit'}
+            </Button>
+            <Popconfirm
+              title="Are you sure you want to delete this user?"
+              onConfirm={() => console.log('Delete user:', record.key)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="link" danger icon={<DeleteOutlined />} size="small">
+                {isMobile ? '' : 'Delete'}
+              </Button>
+            </Popconfirm>
+          </Space>
+        )
+      }
     }
   ]
 
@@ -113,6 +118,7 @@ export const UserTable = () => {
     <Table
       columns={columns}
       dataSource={mockData}
+      scroll={{ x: 800 }}
       pagination={{
         pageSize: 10,
         showSizeChanger: true,

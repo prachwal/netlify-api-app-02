@@ -18,25 +18,29 @@ export const Counter = () => {
       <h1>{t('counter.title')}</h1>
       <p style={{ marginBottom: 24 }}>{t('counter.description')}</p>
 
-      <Card style={{ maxWidth: 400 }}>
+      <Card style={{ width: '100%', maxWidth: 400 }}>
         <Statistic
           title={t('counter.button')}
           value={count}
           styles={{ content: { fontSize: 48, textAlign: 'center' } }}
         />
-        <Space style={{ width: '100%', justifyContent: 'center', marginTop: 24 }} size="large">
+        <Space 
+          orientation={window.innerWidth < 768 ? 'vertical' : 'horizontal'}
+          style={{ width: '100%', justifyContent: 'center', marginTop: 24 }} 
+          size="large"
+        >
           <Button
             type="primary"
             icon={<MinusOutlined />}
             onClick={() => dispatch(decrement())}
-            size="large"
+            size={window.innerWidth < 768 ? 'middle' : 'large'}
           >
             -1
           </Button>
           <Button
             icon={<ReloadOutlined />}
             onClick={() => dispatch(reset())}
-            size="large"
+            size={window.innerWidth < 768 ? 'middle' : 'large'}
           >
             Reset
           </Button>
@@ -44,7 +48,7 @@ export const Counter = () => {
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => dispatch(increment())}
-            size="large"
+            size={window.innerWidth < 768 ? 'middle' : 'large'}
           >
             +1
           </Button>

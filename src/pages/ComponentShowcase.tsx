@@ -49,7 +49,7 @@ export const ComponentShowcase = () => {
         <Tabs
           defaultActiveKey="1"
           items={items}
-          type="card"
+          type={window.innerWidth < 768 ? "line" : "card"}
           size="large"
         />
       </Card>

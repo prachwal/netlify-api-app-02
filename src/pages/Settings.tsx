@@ -17,7 +17,7 @@ export const Settings = () => {
     <div>
       <h1>{t('settings.title')}</h1>
 
-      <Space orientation="vertical" size="large" style={{ width: '100%', maxWidth: 600 }}>
+      <Space orientation="vertical" size="large" style={{ width: '100%', maxWidth: 800 }}>
         <Card>
           <Space orientation="vertical" style={{ width: '100%' }}>
             <label>{t('settings.themeLabel')}</label>

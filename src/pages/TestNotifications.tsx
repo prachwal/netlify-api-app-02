@@ -76,7 +76,7 @@ export const TestNotifications = () => {
       <h1>Test Notifications</h1>
       <p>Test different types of notifications available in Ant Design</p>
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[window.innerWidth < 768 ? 8 : 16, 16]}>
         <Col xs={24} lg={12}>
           <Card title="Message Notifications (Small from Top)" size="small">
             <Space orientation="vertical" style={{ width: '100%' }}>

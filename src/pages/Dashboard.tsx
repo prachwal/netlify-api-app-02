@@ -15,7 +15,7 @@ export const Dashboard = () => {
       <p style={{ marginBottom: 24 }}>{t('dashboard.description')}</p>
 
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={8}>
+        <Col xs={24} sm={12} md={8} xl={6}>
           <Card>
             <Statistic
               title="Users"
@@ -25,7 +25,7 @@ export const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={8}>
+        <Col xs={24} sm={12} md={8} xl={6}>
           <Card>
             <Statistic
               title="Orders"
@@ -35,7 +35,7 @@ export const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={8}>
+        <Col xs={24} sm={12} md={8} xl={6}>
           <Card>
             <Statistic
               title="Revenue"

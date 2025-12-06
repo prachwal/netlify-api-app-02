@@ -93,6 +93,9 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    detection: {
+      htmlTag: true,
+    },
   })
 
 export default i18n

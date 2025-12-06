@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Layout from 'antd/es/layout'
 import Menu from 'antd/es/menu'
 import Button from 'antd/es/button'
@@ -26,11 +26,21 @@ const { Header, Sider, Content } = Layout
 
 export const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { t, i18n } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const { themeMode } = useTheme()
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const menuItems: MenuProps['items'] = [
     {
@@ -103,17 +113,19 @@ export const DashboardLayout = () => {
         collapsible
         collapsed={collapsed}
         breakpoint="lg"
-        collapsedWidth={window.innerWidth < 768 ? 0 : 80}
+        collapsedWidth={isMobile ? 0 : 80}
         onBreakpoint={(broken) => {
           if (broken) setCollapsed(true)
         }}
         style={{
           overflow: 'auto',
           height: '100vh',
-          position: 'fixed',
-          left: 0,
+          position: isMobile ? 'fixed' : 'fixed',
+          left: isMobile && !collapsed ? 0 : collapsed ? (isMobile ? -200 : -120) : 0,
           top: 0,
           bottom: 0,
+          zIndex: isMobile ? 1000 : 'auto',
+          transition: 'left 0.3s',
         }}
       >
         <div
@@ -123,7 +135,7 @@ export const DashboardLayout = () => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#fff',
-            fontSize: collapsed ? 16 : 20,
+            fontSize: collapsed ? 'clamp(14px, 4vw, 16px)' : 'clamp(16px, 5vw, 20px)',
             fontWeight: 'bold',
           }}
         >
@@ -136,10 +148,10 @@ export const DashboardLayout = () => {
           items={menuItems}
         />
       </Sider>
-      <Layout style={{ marginLeft: collapsed ? (window.innerWidth < 768 ? 0 : 80) : 200 }}>
+      <Layout style={{ marginLeft: isMobile ? 0 : (collapsed ? 80 : 200) }}>
         <Header
           style={{
-            padding: '0 16px',
+            padding: isMobile ? '0 8px' : '0 16px',
             background: 'var(--header-bg)',
             display: 'flex',
             alignItems: 'center',
@@ -155,7 +167,7 @@ export const DashboardLayout = () => {
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: 16,
-              width: 64,
+              width: isMobile ? 48 : 64,
               height: 64,
             }}
           />
@@ -170,8 +182,8 @@ export const DashboardLayout = () => {
         </Header>
         <Content
           style={{
-            margin: '24px 16px',
-            padding: 24,
+            margin: isMobile ? '16px 8px' : '24px 16px',
+            padding: isMobile ? 16 : 24,
             minHeight: 280,
             background: 'var(--content-bg)',
             borderRadius: 8,
