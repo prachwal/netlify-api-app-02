@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# Dashboard App - React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Responsywny szablon dashboardu mobile-first z obsługą motywów (jasny/ciemny/system) i wielojęzycznością.
 
-Currently, two official plugins are available:
+## Funkcje
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ✅ **React Router** - nawigacja między stronami
+- ✅ **i18next** - wielojęzyczność (EN/PL)
+- ✅ **Redux Toolkit** - zarządzanie stanem
+- ✅ **Ant Design** - komponenty UI
+- ✅ **Motywy** - jasny/ciemny/system
+- ✅ **Responsive** - mobile-first design
+- ✅ **TypeScript** - type safety
 
-## React Compiler
+## Instalacja
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Nowe zależności:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- react-router-dom@^7.1.3
+- i18next@^24.2.0
+- react-i18next@^15.2.3
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Uruchomienie
+
+```bash
+npm run dev
 ```
+
+## Struktura
+
+```text
+src/
+├── layouts/
+│   └── DashboardLayout.tsx   # Główny layout z sidebar i header
+├── pages/
+│   ├── Dashboard.tsx         # Strona główna z statystykami
+│   ├── Counter.tsx           # Przykładowa strona z licznikiem
+│   └── Settings.tsx          # Ustawienia motywu i języka
+├── store/
+│   ├── index.ts             # Store Redux
+│   ├── counterSlice.ts      # State licznika
+│   └── themeSlice.ts        # State motywu
+├── hooks/
+│   └── useTheme.ts          # Hook dla motywów
+├── i18n/
+│   └── config.ts            # Konfiguracja tłumaczeń
+├── App.tsx                  # Routing
+└── main.tsx                 # Entry point
+
+```
+
+## Dodawanie nowych stron
+
+1. Utwórz komponent w `src/pages/`
+2. Dodaj route w `src/App.tsx`
+3. Dodaj menu item w `src/layouts/DashboardLayout.tsx`
+4. Dodaj tłumaczenia w `src/i18n/config.ts`
+
+## Motywy
+
+Motyw jest automatycznie synchronizowany z:
+
+- localStorage (zachowanie między sesjami)
+- systemowymi preferencjami (tryb system)
+- całą aplikacją (Ant Design components)
