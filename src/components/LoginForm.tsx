@@ -1,12 +1,13 @@
 import { Button, Card, Form, Input, App } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { logger } from '../utils/logger'
 
 export const LoginForm = () => {
   const { message } = App.useApp()
   const [form] = Form.useForm()
 
   const onFinish = (values: { email: string; password: string }) => {
-    console.log('Login values:', values)
+    logger.info('Login attempt', { email: values.email })
     message.success('Login successful!')
   }
 

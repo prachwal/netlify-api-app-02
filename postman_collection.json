@@ -1,0 +1,479 @@
+{
+  "info": {
+    "name": "Netlify API App - Tests",
+    "description": "Postman collection for testing Netlify API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8888",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/users",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "users"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains data array', function () {",
+                  "  pm.expect(responseJson.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Response time is less than 2000ms', function () {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/users/1",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "users", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains user data', function () {",
+                  "  pm.expect(responseJson.data).to.have.property('id');",
+                  "  pm.expect(responseJson.data).to.have.property('name');",
+                  "  pm.expect(responseJson.data).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"settings\": {\n    \"role\": \"User\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/users",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "users"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains created user', function () {",
+                  "  pm.expect(responseJson.data).to.have.property('id');",
+                  "  pm.expect(responseJson.data.name).to.equal('Test User');",
+                  "});",
+                  "",
+                  "pm.test('Sets user_id variable', function () {",
+                  "  pm.collectionVariables.set('user_id', responseJson.data.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated User\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "users", "{{user_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('User was updated', function () {",
+                  "  pm.expect(responseJson.data.name).to.equal('Updated User');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "users", "{{user_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('User was deleted', function () {",
+                  "  pm.expect(responseJson.data.deletedCount).to.equal(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/dashboard",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains dashboard data', function () {",
+                  "  pm.expect(responseJson.data).to.have.property('totalUsers');",
+                  "  pm.expect(responseJson.data).to.have.property('activeUsers');",
+                  "  pm.expect(responseJson.data).to.have.property('totalRevenue');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/settings/1",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "settings", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains settings data', function () {",
+                  "  pm.expect(responseJson.data).to.have.property('userId');",
+                  "  pm.expect(responseJson.data).to.have.property('theme');",
+                  "  pm.expect(responseJson.data).to.have.property('language');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theme\": \"dark\",\n  \"language\": \"pl\",\n  \"notifications\": true,\n  \"emailUpdates\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/settings/3",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "settings", "3"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains created settings', function () {",
+                  "  pm.expect(responseJson.data.userId).to.equal('3');",
+                  "  pm.expect(responseJson.data.theme).to.equal('dark');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theme\": \"system\",\n  \"language\": \"en\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/settings/1",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "settings", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Settings were updated', function () {",
+                  "  pm.expect(responseJson.data.theme).to.equal('system');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Settings",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/settings/3",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "settings", "3"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Settings were deleted', function () {",
+                  "  pm.expect(responseJson.data.deletedUserId).to.equal('3');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Demo",
+      "item": [
+        {
+          "name": "Get Demo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.netlify/functions/demo?name=World",
+              "host": ["{{base_url}}"],
+              "path": [".netlify", "functions", "demo"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "World"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status true', function () {",
+                  "  pm.expect(responseJson.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains hello message', function () {",
+                  "  pm.expect(responseJson.data).to.equal('Hello World');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

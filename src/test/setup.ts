@@ -1,6 +1,34 @@
 import { vi } from 'vitest'
 import '@testing-library/jest-dom'
 
+// Mock RTK Query API calls
+vi.mock('../store/api', () => ({
+  useGetSettingsQuery: vi.fn(() => ({
+    data: {
+      data: {
+        theme: 'system',
+        language: 'en',
+        notifications: true,
+        emailUpdates: false
+      }
+    },
+    isLoading: false,
+    error: null
+  })),
+  useUpdateSettingsMutation: vi.fn(() => [
+    vi.fn(() => Promise.resolve({ data: { success: true } })),
+    { isLoading: false, error: null }
+  ]),
+  useCreateSettingsMutation: vi.fn(() => [
+    vi.fn(() => Promise.resolve({ data: { success: true } })),
+    { isLoading: false, error: null }
+  ]),
+  useDeleteSettingsMutation: vi.fn(() => [
+    vi.fn(() => Promise.resolve({ data: { success: true } })),
+    { isLoading: false, error: null }
+  ])
+}))
+
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
