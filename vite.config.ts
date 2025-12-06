@@ -12,7 +12,6 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'router-vendor': ['react-router-dom'],
           'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
-          'antd-vendor': ['antd'],
           'i18n-vendor': ['i18next', 'react-i18next'],
         },
       },

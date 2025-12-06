@@ -15,6 +15,7 @@ This is a responsive mobile-first dashboard app built with React, TypeScript, an
 - **Internationalization**: Translations in `src/i18n/config.ts`; use `useTranslation` hook from react-i18next
 - **Layout Structure**: Pages are nested under `DashboardLayout.tsx` with sidebar navigation
 - **Notifications**: Use `message` and `notification` from `App.useApp()` for theme context; use `title` instead of `message` in notification props (see `src/pages/TestNotifications.tsx`)
+- **Theme Context**: Always use `App.useApp()` for `message`, `notification`, and `modal` to ensure proper theme inheritance; avoid static imports like `import { message } from 'antd'` which don't respond to theme changes
 - **Code Splitting**: All route components are lazy-loaded for optimal performance
 - **Error Boundaries**: Use `/error` route for error handling and `/*` catch-all for 404 pages
 
@@ -28,7 +29,7 @@ This is a responsive mobile-first dashboard app built with React, TypeScript, an
 - **File Structure**: Pages in `src/pages/`, layouts in `src/layouts/`, store slices in `src/store/`
 - **State Updates**: Dispatch actions to Redux slices (e.g., `counterSlice.ts` for counter logic)
 - **Styling**: CSS modules or Antd classes; theme applied via `ConfigProvider`
-- **Ant Design**: Use `orientation` instead of deprecated `direction` prop for Space components
+- **Ant Design**: Use `orientation` instead of deprecated `direction` prop for Space components; use `size` instead of deprecated `width` prop for Drawer components; use `title` instead of deprecated `message` prop for Alert components
 - **Deployment**: Hosted on Netlify; use `netlify sites:list` to check sites
 
 ## Examples

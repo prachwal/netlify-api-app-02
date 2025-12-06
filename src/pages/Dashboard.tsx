@@ -1,4 +1,7 @@
-import { Card, Row, Col, Statistic } from 'antd'
+import Card from 'antd/es/card'
+import Row from 'antd/es/row'
+import Col from 'antd/es/col'
+import Statistic from 'antd/es/statistic'
 import { UserOutlined, ShoppingCartOutlined, DollarOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 

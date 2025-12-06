@@ -11,6 +11,7 @@ const Settings = lazy(() => import('./pages/Settings').then(module => ({ default
 const TestNotifications = lazy(() => import('./pages/TestNotifications').then(module => ({ default: module.TestNotifications })))
 const NotFound = lazy(() => import('./pages/NotFound').then(module => ({ default: module.NotFound })))
 const ErrorPage = lazy(() => import('./pages/ErrorPage').then(module => ({ default: module.ErrorPage })))
+const ComponentShowcase = lazy(() => import('./pages/ComponentShowcase').then(module => ({ default: module.ComponentShowcase })))
 
 // Loading component
 const LoadingSpinner = () => (
@@ -34,6 +35,7 @@ function AppContent() {
             <Route path="counter" element={<Counter />} />
             <Route path="settings" element={<Settings />} />
             <Route path="test" element={<TestNotifications />} />
+            <Route path="components" element={<ComponentShowcase />} />
           </Route>
           <Route path="/error" element={<ErrorPage />} />
           <Route path="*" element={<NotFound />} />

@@ -17,6 +17,14 @@ const ThemeWrapper = ({ children }: { children: React.ReactNode }) => {
     <ConfigProvider
       theme={{
         algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        components: {
+          Message: {
+            zIndexPopup: 2000,
+          },
+          Notification: {
+            zIndexPopup: 2000,
+          },
+        },
       }}
     >
       {children}

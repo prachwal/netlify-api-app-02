@@ -1,7 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { increment, decrement, reset } from '../store/counterSlice'
 import type { RootState, AppDispatch } from '../store'
-import { Button, Space, Card, Statistic } from 'antd'
+import Button from 'antd/es/button'
+import Space from 'antd/es/space'
+import Card from 'antd/es/card'
+import Statistic from 'antd/es/statistic'
 import { PlusOutlined, MinusOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 

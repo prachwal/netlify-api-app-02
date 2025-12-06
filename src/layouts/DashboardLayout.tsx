@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { Layout, Menu, Button, Dropdown, Space } from 'antd'
+import Layout from 'antd/es/layout'
+import Menu from 'antd/es/menu'
+import Button from 'antd/es/button'
+import Dropdown from 'antd/es/dropdown'
+import Space from 'antd/es/space'
 import type { MenuProps } from 'antd'
 import {
   MenuFoldOutlined,
@@ -52,6 +56,12 @@ export const DashboardLayout = () => {
       icon: <ExperimentOutlined />,
       label: t('nav.test'),
       onClick: () => navigate('/test'),
+    },
+    {
+      key: '/components',
+      icon: <BulbOutlined />,
+      label: 'Komponenty',
+      onClick: () => navigate('/components'),
     },
   ]
 

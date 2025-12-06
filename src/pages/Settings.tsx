@@ -1,4 +1,6 @@
-import { Card, Select, Space } from 'antd'
+import Card from 'antd/es/card'
+import Select from 'antd/es/select'
+import Space from 'antd/es/space'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store'
