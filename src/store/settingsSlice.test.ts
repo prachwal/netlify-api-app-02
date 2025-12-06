@@ -19,7 +19,9 @@ describe('settingsSlice', () => {
 
   it('should return the initial state', () => {
     localStorageMock.getItem.mockReturnValue(null)
-    const state = settingsReducer(undefined, { type: undefined })
+    // Use a proper Redux action type to test initial state
+    const initAction = { type: '@@INIT' } as const
+    const state = settingsReducer(undefined, initAction)
     expect(state).toEqual({ theme: 'system', language: 'en' })
   })
 
