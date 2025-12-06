@@ -337,6 +337,14 @@ class ApiWrapper {
         });
       }
 
+      // Handle ApiError with custom status code
+      if (error instanceof ApiError) {
+        return this.createErrorResponse(error.message, error.statusCode, {
+          ...options.metadata,
+          responseTime
+        });
+      }
+
       return this.createErrorResponse(error instanceof Error ? error.message : String(error), 500, {
         ...options.metadata,
         responseTime
@@ -404,5 +412,12 @@ export const apiWrapper = new ApiWrapper({
 // Export class for custom instances
 export { ApiWrapper };
 
-// Export types
-export type { WrapperOptions, CacheOptions, RetryOptions, RateLimitOptions };
+/**
+ * Custom error class for API errors with status codes
+ */
+export class ApiError extends Error {
+  constructor(message: string, public statusCode: number = 500) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}

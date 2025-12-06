@@ -1,5 +1,5 @@
 import { Context } from "@netlify/functions";
-import { apiResponse } from "../../types";
+import { apiWrapper, ApiError } from "../../lib/api-wrapper.mts";
 import { MongoDBHandler } from "../../lib/mongodb";
 
 interface User {
@@ -11,7 +11,16 @@ interface User {
   settings?: Record<string, any>;
 }
 
-export default async (request: Request, context: Context) => {
+interface UsersResponse {
+  users?: User[];
+  user?: User;
+  deletedCount?: number;
+}
+
+/**
+ * Business logic handler for users endpoint
+ */
+async function usersHandler(request: Request, context: Context): Promise<UsersResponse> {
   const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017';
   const dbName = process.env.DB_NAME || 'netlify-api-app';
   const mongoHandler = new MongoDBHandler(mongoUri, dbName);
@@ -28,39 +37,13 @@ export default async (request: Request, context: Context) => {
         // Get specific user by ID
         const user = await mongoHandler.findOne('users', { id });
         if (!user) {
-          const response: apiResponse<null> = {
-            status: false,
-            error: "User not found",
-            metadata: {
-              timestamp: new Date().toISOString(),
-              requestUrl: request.url,
-            },
-          };
-          return new Response(JSON.stringify(response), { status: 404 });
+          throw new ApiError("User not found", 404);
         }
-
-        const response: apiResponse<User> = {
-          status: true,
-          data: user as User,
-          metadata: {
-            timestamp: new Date().toISOString(),
-            requestUrl: request.url,
-          },
-        };
-        return new Response(JSON.stringify(response));
+        return { user: user as User };
       } else {
         // Get all users
         const users = await mongoHandler.find('users');
-        const response: apiResponse<User[]> = {
-          status: true,
-          data: users as User[],
-          metadata: {
-            timestamp: new Date().toISOString(),
-            requestUrl: request.url,
-            total: users.length
-          },
-        };
-        return new Response(JSON.stringify(response));
+        return { users: users as User[] };
       }
     } else if (request.method === 'POST') {
       // Create new user
@@ -74,116 +57,58 @@ export default async (request: Request, context: Context) => {
       };
       const insertedId = await mongoHandler.insertOne('users', newUser);
       newUser._id = insertedId.toString();
-
-      const response: apiResponse<User> = {
-        status: true,
-        data: newUser,
-        metadata: {
-          timestamp: new Date().toISOString(),
-          requestUrl: request.url,
-        },
-      };
-      return new Response(JSON.stringify(response), { status: 201 });
+      return { user: newUser };
     } else if (request.method === 'PUT') {
       // Update user
       if (!id || id === 'users') {
-        const response: apiResponse<null> = {
-          status: false,
-          error: "User ID required for update",
-          metadata: {
-            timestamp: new Date().toISOString(),
-            requestUrl: request.url,
-          },
-        };
-        return new Response(JSON.stringify(response), { status: 400 });
+        throw new ApiError("User ID required for update", 400);
       }
 
       const body = await request.json();
       const updateCount = await mongoHandler.updateOne('users', { id }, { $set: body });
       if (updateCount === 0) {
-        const response: apiResponse<null> = {
-          status: false,
-          error: "User not found",
-          metadata: {
-            timestamp: new Date().toISOString(),
-            requestUrl: request.url,
-          },
-        };
-        return new Response(JSON.stringify(response), { status: 404 });
+        throw new ApiError("User not found", 404);
       }
 
       const updatedUser = await mongoHandler.findOne('users', { id });
-      const response: apiResponse<User> = {
-        status: true,
-        data: updatedUser as User,
-        metadata: {
-          timestamp: new Date().toISOString(),
-          requestUrl: request.url,
-        },
-      };
-      return new Response(JSON.stringify(response));
+      return { user: updatedUser as User };
     } else if (request.method === 'DELETE') {
       // Delete user
       if (!id || id === 'users') {
-        const response: apiResponse<null> = {
-          status: false,
-          error: "User ID required for deletion",
-          metadata: {
-            timestamp: new Date().toISOString(),
-            requestUrl: request.url,
-          },
-        };
-        return new Response(JSON.stringify(response), { status: 400 });
+        throw new ApiError("User ID required for deletion", 400);
       }
 
       const deleteCount = await mongoHandler.deleteOne('users', { id });
       if (deleteCount === 0) {
-        const response: apiResponse<null> = {
-          status: false,
-          error: "User not found",
-          metadata: {
-            timestamp: new Date().toISOString(),
-            requestUrl: request.url,
-          },
-        };
-        return new Response(JSON.stringify(response), { status: 404 });
+        throw new ApiError("User not found", 404);
       }
 
-      const response: apiResponse<{ deletedCount: number }> = {
-        status: true,
-        data: { deletedCount: deleteCount },
-        metadata: {
-          timestamp: new Date().toISOString(),
-          requestUrl: request.url,
-        },
-      };
-      return new Response(JSON.stringify(response));
+      return { deletedCount: deleteCount };
     }
 
     // Method not allowed
-    const response: apiResponse<null> = {
-      status: false,
-      error: "Method not allowed",
-      metadata: {
-        timestamp: new Date().toISOString(),
-        requestUrl: request.url,
-        allowedMethods: ["GET", "POST", "PUT", "DELETE"]
-      },
-    };
-    return new Response(JSON.stringify(response), { status: 405 });
+    throw new ApiError("Method not allowed", 405);
 
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    const response: apiResponse<null> = {
-      status: false,
-      error: message,
-      metadata: {
-        timestamp: new Date().toISOString(),
-        requestUrl: request.url,
-      },
-    };
-    return new Response(JSON.stringify(response), { status: 500 });
   } finally {
     await mongoHandler.disconnect();
   }
+}
+
+/**
+ * Users function wrapped with apiWrapper
+ * Provides caching, rate limiting, retry logic, and structured logging
+ */
+export default async (request: Request, context: Context) => {
+  return apiWrapper.handleRequest(
+    request,
+    context,
+    usersHandler,
+    {
+      metadata: {
+        endpoint: 'users',
+        service: 'user-management'
+      },
+      skipRetry: request.method === 'POST' || request.method === 'PUT' || request.method === 'DELETE' // Don't retry mutations
+    }
+  );
 };
