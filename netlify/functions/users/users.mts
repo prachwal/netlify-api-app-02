@@ -108,6 +108,18 @@ async function usersHandler(request: Request, context: Context): Promise<UsersRe
  * Provides caching, rate limiting, retry logic, and structured logging
  */
 export default async (request: Request, context: Context) => {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
   return apiWrapper.handleRequest(
     request,
     context,

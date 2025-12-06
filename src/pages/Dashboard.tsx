@@ -10,6 +10,15 @@ export const Dashboard = () => {
   const { t } = useTranslation()
   const { data: dashboardData, isLoading, error } = useGetDashboardQuery(undefined)
 
+  // Debug logging
+  console.log('Dashboard debug:', {
+    dashboardData,
+    dashboardDataType: typeof dashboardData,
+    dashboardDataKeys: dashboardData ? Object.keys(dashboardData) : null,
+    isLoading,
+    error
+  })
+
   if (isLoading) return <div>Loading dashboard...</div>
   if (error) return <div>Error loading dashboard</div>
 

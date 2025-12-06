@@ -57,6 +57,7 @@ export const api = createApi({
     // Example endpoint for dashboard data
     getDashboard: builder.query({
       query: () => 'dashboard',
+      transformResponse: (response: { status: boolean; data: any; metadata: any }) => response.data,
       providesTags: ['Dashboard'],
     }),
 

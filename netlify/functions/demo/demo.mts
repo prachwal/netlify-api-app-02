@@ -17,6 +17,18 @@ async function demoHandler(request: Request, context: Context) {
  * Demo function - direct response without apiWrapper for testing
  */
 export default async (request: Request, context: Context) => {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
   try {
     const data = await demoHandler(request, context);
     const response = {

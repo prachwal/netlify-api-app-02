@@ -76,6 +76,18 @@ async function dashboardHandler(request: Request, context: Context): Promise<Das
  * Provides caching (1 minute for real-time feel), rate limiting, retry logic, and structured logging
  */
 export default async (request: Request, context: Context) => {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
   return apiWrapper.handleRequest(
     request,
     context,
