@@ -1,8 +1,20 @@
 {
   "name": "netlify-api-app-02",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "description": "Netlify API React App",
+  "license": "MIT",
   "type": "module",
+  "author": "Przemyslaw Rachwlal <przemyslaw.rachwal@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prachwal/netlify-api-app-02.git"
+  },
+  "netlify": {
+    "adminUrl": "https://app.netlify.com/projects/jovial-brigadeiros-420039",
+    "url": "https://jovial-brigadeiros-420039.netlify.app",
+    "projectId": "1168a51c-5286-4679-b32a-8f2bc07f7b2a"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
