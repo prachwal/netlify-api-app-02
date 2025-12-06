@@ -21,7 +21,7 @@ This is a responsive mobile-first dashboard app built with React, TypeScript, an
 
 ## Developer Workflows
 - **Development**: `npm run dev` starts Vite dev server
-- **Build**: `npm run build` compiles TypeScript and builds for production with code splitting
+- **Build**: `npm run build` compiles TypeScript and builds for production with code splitting, tree-shaking, and lazy loading. Uses specific Ant Design imports to reduce bundle size.
 - **Linting**: `npm run lint` runs ESLint
 - **Merge Script**: `npm run merge` bundles config files and src/ into `tmp/merged-files.txt` for context sharing
 
@@ -29,11 +29,26 @@ This is a responsive mobile-first dashboard app built with React, TypeScript, an
 - **File Structure**: Pages in `src/pages/`, layouts in `src/layouts/`, store slices in `src/store/`
 - **State Updates**: Dispatch actions to Redux slices (e.g., `counterSlice.ts` for counter logic)
 - **Styling**: CSS modules or Antd classes; theme applied via `ConfigProvider`
+- **Imports**: Use specific Ant Design component imports (e.g., `import Button from 'antd/es/button'`) instead of barrel imports for better tree-shaking and reduced bundle sizes
 - **Ant Design**: Use `orientation` instead of deprecated `direction` prop for Space components; use `size` instead of deprecated `width` prop for Drawer components; use `title` instead of deprecated `message` prop for Alert components
 - **Deployment**: Hosted on Netlify; use `netlify sites:list` to check sites
 
 ## Examples
 - Adding a new page: Create in `src/pages/`, add route in `src/App.tsx`, update nav in `DashboardLayout.tsx`
 - Managing state: Define actions/reducers in slice files, use `useSelector`/`useDispatch` in components
-- Theming: Check `isDark` from `useTheme` hook to conditionally apply styles</content>
+- Theming: Check `isDark` from `useTheme` hook to conditionally apply styles
+
+## Dependencies & Libraries
+- Core: React 19, Vite, TypeScript
+- UI: Ant Design (antd)
+- Avoid unnecessary dependencies; evaluate each addition.
+
+## Git Workflow
+- Commit messages should be descriptive and follow conventional commits where applicable.
+- Branch naming: feature/, bugfix/, etc.
+
+## Additional Notes
+- License: MIT
+- Author: Przemyslaw Rachwlal <przemyslaw.rachwal@gmail.com>
+- Repository: <https://github.com/prachwal/netlify-api-app-02></content>
 <parameter name="filePath">/home/prachwal/src/react/netlify-api-app-02/.github/copilot-instructions.md
