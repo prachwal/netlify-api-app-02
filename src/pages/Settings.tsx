@@ -17,7 +17,7 @@ export const Settings = () => {
 
       <Space orientation="vertical" size="large" style={{ width: '100%', maxWidth: 600 }}>
         <Card>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space orientation="vertical" style={{ width: '100%' }}>
             <label>{t('settings.themeLabel')}</label>
             <Select
               style={{ width: '100%' }}
@@ -33,7 +33,7 @@ export const Settings = () => {
         </Card>
 
         <Card>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space orientation="vertical" style={{ width: '100%' }}>
             <label>{t('settings.languageLabel')}</label>
             <Select
               style={{ width: '100%' }}

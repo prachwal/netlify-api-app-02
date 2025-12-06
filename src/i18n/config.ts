@@ -8,6 +8,7 @@ const resources = {
         dashboard: 'Dashboard',
         counter: 'Counter',
         settings: 'Settings',
+        test: 'Test',
       },
       theme: {
         light: 'Light',
@@ -29,6 +30,16 @@ const resources = {
         themeLabel: 'Theme',
         languageLabel: 'Language',
       },
+      notFound: {
+        title: '404',
+        subTitle: 'Sorry, the page you visited does not exist.',
+        backHome: 'Back Home',
+      },
+      error: {
+        title: '500',
+        subTitle: 'Sorry, something went wrong.',
+        backHome: 'Back Home',
+      },
     },
   },
   pl: {
@@ -37,6 +48,7 @@ const resources = {
         dashboard: 'Panel',
         counter: 'Licznik',
         settings: 'Ustawienia',
+        test: 'Test',
       },
       theme: {
         light: 'Jasny',
@@ -57,6 +69,16 @@ const resources = {
         title: 'Ustawienia',
         themeLabel: 'Motyw',
         languageLabel: 'Język',
+      },
+      notFound: {
+        title: '404',
+        subTitle: 'Przepraszamy, strona której szukasz nie istnieje.',
+        backHome: 'Powrót do strony głównej',
+      },
+      error: {
+        title: '500',
+        subTitle: 'Przepraszamy, wystąpił błąd serwera.',
+        backHome: 'Powrót do strony głównej',
       },
     },
   },

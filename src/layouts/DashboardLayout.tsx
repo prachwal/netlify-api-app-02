@@ -9,6 +9,7 @@ import {
   SettingOutlined,
   GlobalOutlined,
   BulbOutlined,
+  ExperimentOutlined,
 } from '@ant-design/icons'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -45,6 +46,12 @@ export const DashboardLayout = () => {
       icon: <SettingOutlined />,
       label: t('nav.settings'),
       onClick: () => navigate('/settings'),
+    },
+    {
+      key: '/test',
+      icon: <ExperimentOutlined />,
+      label: t('nav.test'),
+      onClick: () => navigate('/test'),
     },
   ]
 
