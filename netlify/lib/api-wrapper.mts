@@ -2,6 +2,92 @@ import { Context } from "@netlify/functions";
 import { apiResponse } from "../types";
 import winston from 'winston';
 
+// Logger Strategy Interface
+interface LoggerStrategy {
+  info(message: string, meta?: any): void;
+  error(message: string, meta?: any): void;
+  debug(message: string, meta?: any): void;
+  warn(message: string, meta?: any): void;
+}
+
+// Winston Logger Strategy - Full featured for development
+class WinstonLogger implements LoggerStrategy {
+  private logger: winston.Logger;
+
+  constructor() {
+    this.logger = winston.createLogger({
+      level: process.env.LOG_LEVEL || 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'api-wrapper' },
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
+          )
+        })
+      ]
+    });
+  }
+
+  info(message: string, meta?: any): void {
+    this.logger.info(message, meta);
+  }
+
+  error(message: string, meta?: any): void {
+    this.logger.error(message, meta);
+  }
+
+  debug(message: string, meta?: any): void {
+    this.logger.debug(message, meta);
+  }
+
+  warn(message: string, meta?: any): void {
+    this.logger.warn(message, meta);
+  }
+}
+
+// Console Logger Strategy - Minimal for production/Netlify
+class ConsoleLogger implements LoggerStrategy {
+  info(message: string, meta?: any): void {
+    console.log(`[INFO] ${message}`, meta ? JSON.stringify(meta) : '');
+  }
+
+  error(message: string, meta?: any): void {
+    console.error(`[ERROR] ${message}`, meta ? JSON.stringify(meta) : '');
+  }
+
+  debug(message: string, meta?: any): void {
+    if (process.env.LOG_LEVEL === 'debug') {
+      console.debug(`[DEBUG] ${message}`, meta ? JSON.stringify(meta) : '');
+    }
+  }
+
+  warn(message: string, meta?: any): void {
+    console.warn(`[WARN] ${message}`, meta ? JSON.stringify(meta) : '');
+  }
+}
+
+// Logger Factory - chooses strategy based on environment
+function createLogger(): LoggerStrategy {
+  const isProduction = process.env.NODE_ENV === 'production' ||
+                      process.env.NETLIFY === 'true' ||
+                      !process.env.NODE_ENV; // Netlify default
+
+  if (isProduction) {
+    return new ConsoleLogger();
+  } else {
+    return new WinstonLogger();
+  }
+}
+
+// Global logger instance
+const logger = createLogger();
+
 // Types for the API wrapper
 interface CacheOptions {
   enabled: boolean;
@@ -31,25 +117,6 @@ const cache = new Map<string, { data: any; expiry: number }>();
 
 // Rate limiting storage
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-// Winston logger configuration
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'api-wrapper' },
-  transports: [
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple()
-      )
-    })
-  ]
-});
 
 class ApiWrapper {
   private options: WrapperOptions;
