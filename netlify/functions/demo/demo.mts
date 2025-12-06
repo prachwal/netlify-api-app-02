@@ -1,34 +1,48 @@
 import { Context } from "@netlify/functions";
-import { apiResponse } from "../../types";
 
-export default (request: Request, context: Context) => {
+/**
+ * Business logic handler for demo endpoint
+ */
+async function demoHandler(request: Request, context: Context) {
+  const url = new URL(request.url);
+  const subject = url.searchParams.get("name") || "World";
+  
+  // Simulate some processing time
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  return { message: `Hello ${subject}` };
+}
 
+/**
+ * Demo function - direct response without apiWrapper for testing
+ */
+export default async (request: Request, context: Context) => {
   try {
-    const url = new URL(request.url);
-    const subject = url.searchParams.get("name") || "World";
-
-    const response: apiResponse<string> = {
+    const data = await demoHandler(request, context);
+    const response = {
       status: true,
-      data: `Hello ${subject}`,
+      data,
       metadata: {
         timestamp: new Date().toISOString(),
-        requestUrl: request.url,
-      },
-    };
-
-    return new Response(JSON.stringify(response));
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    const response: apiResponse<string> = {
-      status: false,
-      error: message,
-      metadata: {
-        timestamp: new Date().toISOString(),
-        requestUrl: request.url,
-      },
+        endpoint: 'demo',
+        service: 'greeting'
+      }
     };
     return new Response(JSON.stringify(response), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    const errorResponse = {
+      status: false,
+      error: error instanceof Error ? error.message : String(error),
+      metadata: {
+        timestamp: new Date().toISOString(),
+        endpoint: 'demo'
+      }
+    };
+    return new Response(JSON.stringify(errorResponse), {
       status: 500,
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 };

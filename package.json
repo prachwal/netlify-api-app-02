@@ -21,6 +21,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
+    "test:functions": "node scripts/test-endpoints.mjs",
     "merge": "node scripts/merge-files.js package.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json eslint.config.js README.md $(git ls-files src/) tmp/merged-files.txt"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
 import { Context } from "@netlify/functions";
-import { apiResponse } from "../../types";
+import { apiWrapper } from "../../lib/api-wrapper.mts";
 
 interface DashboardData {
   totalUsers: number;
@@ -49,55 +49,43 @@ const mockDashboardData: DashboardData = {
   }
 };
 
-export default (request: Request, context: Context) => {
-  try {
-    if (request.method === 'GET') {
-      // Add some randomness to simulate live data
-      const currentData = {
-        ...mockDashboardData,
-        totalUsers: mockDashboardData.totalUsers + Math.floor(Math.random() * 10),
-        activeUsers: mockDashboardData.activeUsers + Math.floor(Math.random() * 5),
-        stats: {
-          ...mockDashboardData.stats,
-          apiCalls: mockDashboardData.stats.apiCalls + Math.floor(Math.random() * 20)
-        }
-      };
-
-      const response: apiResponse<DashboardData> = {
-        status: true,
-        data: currentData,
-        metadata: {
-          timestamp: new Date().toISOString(),
-          requestUrl: request.url,
-          lastUpdated: new Date().toISOString()
-        },
-      };
-
-      return new Response(JSON.stringify(response));
-    }
-
-    // Method not allowed
-    const response: apiResponse<null> = {
-      status: false,
-      error: "Method not allowed",
-      metadata: {
-        timestamp: new Date().toISOString(),
-        requestUrl: request.url,
-        allowedMethods: ["GET"]
-      },
-    };
-    return new Response(JSON.stringify(response), { status: 405 });
-
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    const response: apiResponse<null> = {
-      status: false,
-      error: message,
-      metadata: {
-        timestamp: new Date().toISOString(),
-        requestUrl: request.url,
-      },
-    };
-    return new Response(JSON.stringify(response), { status: 500 });
+/**
+ * Business logic handler for dashboard endpoint
+ */
+async function dashboardHandler(request: Request, context: Context): Promise<DashboardData> {
+  if (request.method !== 'GET') {
+    throw new Error("Method not allowed");
   }
+
+  // Add some randomness to simulate live data
+  const currentData = {
+    ...mockDashboardData,
+    totalUsers: mockDashboardData.totalUsers + Math.floor(Math.random() * 10),
+    activeUsers: mockDashboardData.activeUsers + Math.floor(Math.random() * 5),
+    stats: {
+      ...mockDashboardData.stats,
+      apiCalls: mockDashboardData.stats.apiCalls + Math.floor(Math.random() * 20)
+    }
+  };
+
+  return currentData;
+}
+
+/**
+ * Dashboard function wrapped with apiWrapper
+ * Provides caching (1 minute for real-time feel), rate limiting, retry logic, and structured logging
+ */
+export default async (request: Request, context: Context) => {
+  return apiWrapper.handleRequest(
+    request,
+    context,
+    dashboardHandler,
+    {
+      metadata: {
+        endpoint: 'dashboard',
+        service: 'dashboard'
+      },
+      cacheKey: `dashboard:${Date.now() - (Date.now() % 60000)}` // Cache for 1 minute
+    }
+  );
 };
